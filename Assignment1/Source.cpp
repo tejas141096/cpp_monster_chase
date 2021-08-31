@@ -18,7 +18,7 @@ int main()
 	//Getting number of monsters from user
 	printf("Enter number of monsters: ");
 	unsigned int* numberOfMonsters = new unsigned int(0);
-	scanf_s("%d", &(*numberOfMonsters));
+	scanf("%d", &(*numberOfMonsters));
 	printf("Number of monsters = %d\n", *numberOfMonsters);
 
 
@@ -55,12 +55,12 @@ int main()
 
 
 
-	char* charInput = new char;
-	int* sizeOfName = new int;
+	char* charInput = new char(1);
+	int* sizeOfName = new int(1);
 	
 	for (unsigned int i = 0; i < *numberOfMonsters; i++)
 	{
-		gets_s(monsters[i].monsterName,);
+		// gets_s(monsters[i].monsterName[]);
 		monsters[i].monsterName = (char*)malloc(sizeof(char));
 		if (monsters[i].monsterName == NULL)
 		{
@@ -72,7 +72,7 @@ int main()
 		while (*charInput != '\n')
 		{
 			*charInput = getchar();
-			*monsters[i].monsterName = (char)realloc(monsters[i].monsterName, monsterNameSize[i] + 1);
+			(void *)realloc(monsters[i].monsterName, monsterNameSize[i] + 1);
 			monsters[i].monsterName[*monsterNameSize-1] = *charInput;
 			monsterNameSize[i]++;
 		}
