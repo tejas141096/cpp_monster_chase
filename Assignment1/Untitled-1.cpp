@@ -1,67 +1,121 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <conio.h>
 #include <malloc.h>
 #include <string.h>
 
+// Player class
 class Player
 {
 private:
     char *name;
-    int *x;
-    int *y;
+    int x;
+    int y;
+
 public:
-    Player(char *s)
+    Player() {}
+    ~Player() {}
+
+    void set(char *s)
     {
         name = s;
-        x=0;
-        y=0;
+        x = 0;
+        y = 0;
     }
-    ~Player() {}
-    void printName()
+    void print()
     {
-        printf("Name: ");
         for (size_t i = 0; i < strlen(name); i++)
         {
-            printf_s("%c", name[i]);
+            printf("%c", name[i]);
         }
-        printf("\n");
-        printf("x: %d",x);
-        printf("y: %d",y);
+        printf(": [ %d , %d ]\n", x, y);
+        printf("%d", strlen(name));
     }
 };
 
-// Player::Player()
-// {
-// }
-// // Player::Player(char s[])
-// // {
-// //     for (size_t i = 0; i < strlen(*s); i++)
-// //     {
-// //         printf_s("%c", s[i]);
-// //     }
-// // }
-// Player::~Player()
-// {
-// }
+class Monster
+{
+private:
+    char *name;
+    int x;
+    int y;
+
+public:
+    Monster() {}
+    ~Monster() {}
+
+    void set(char *s)
+    {
+        name = s;
+        x = rand() % 101;
+        y = rand() % 101;
+    }
+    void print()
+    {
+        for (size_t i = 0; i < strlen(name); i++)
+        {
+            printf("%c", name[i]);
+        }
+        printf(": [ %d , %d ]\n", x, y);
+        printf("%d", strlen(name));
+    }
+};
 
 int main()
 {
-    // printf("Hello world!");
+    // Setup Player
     char *playerName = new char;
     char *c = new char;
-    size_t size = 1;
+    size_t *nameSize = new size_t;
+    *nameSize = 1;
     printf("Enter player name: ");
     while (*c != '\n')
     {
-        scanf("%c", c);
-        playerName = (char *)realloc(playerName, size + 1);
-        playerName[size - 1] = *c;
-        size++;
+        scanf("%c", &(*c));
+        if (*c == '\n')
+            break;
+        playerName = (char *)realloc(playerName, (*nameSize) + 1);
+        playerName[(*nameSize) - 1] = *c;
+        (*nameSize)++;
     }
-    playerName[size] = '\0';
+    playerName[(*nameSize)] = '\0';
+    Player *player = new Player();
+    player->set(playerName);
+    player->print();
+    delete playerName;
+    delete c;
+    delete nameSize;
 
-    Player *player = new Player(playerName);
-    // player->name = playerName;
-    player->printName();
+    // Setup Monsters
+    unsigned int *numberOfMonsters = new unsigned int();
+    printf("Enter number of monsters: ");
+    scanf("%d", &(*numberOfMonsters));
+    printf("Number of monsters: %d\n", *numberOfMonsters);
+    Monster *monsters = new Monster[*numberOfMonsters];
+    for (size_t i = 0; i < *numberOfMonsters; i++)
+    {
+        char *monsterName = new char;
+        char *c = new char;
+        size_t *nameSize = new size_t;
+        *nameSize = 1;
+        printf("Enter monster %d name: ", i + 1);
+        fflush(stdin);
+        while (*c != '\n')
+        {
+            scanf("%c", &(*c));
+            if (*c == '\n')
+                break;
+            monsterName = (char *)realloc(monsterName, (*nameSize) + 1);
+            monsterName[(*nameSize) - 1] = *c;
+            (*nameSize)++;
+        }
+        monsterName[(*nameSize)] = '\0';
+        monsters[i].set(monsterName);
+        monsters[i].print();
+        delete monsterName;
+        delete c;
+        delete nameSize;
+    }
+
     return 0;
 }
