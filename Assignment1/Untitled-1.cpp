@@ -76,9 +76,10 @@ int main()
             break;
         playerName = (char *)realloc(playerName, (*nameSize) + 1);
         playerName[(*nameSize) - 1] = *c;
+        playerName[(*nameSize)] = '\0';
         (*nameSize)++;
     }
-    playerName[(*nameSize)] = '\0';
+    
     Player *player = new Player();
     player->set(playerName);
     player->print();
@@ -106,16 +107,19 @@ int main()
             if (*c == '\n')
                 break;
             monsterName = (char *)realloc(monsterName, (*nameSize) + 1);
+            monsterName[(*nameSize)] = '\0';
             monsterName[(*nameSize) - 1] = *c;
             (*nameSize)++;
         }
-        monsterName[(*nameSize)] = '\0';
+        
         monsters[i].set(monsterName);
         monsters[i].print();
         delete monsterName;
         delete c;
         delete nameSize;
     }
+
+    
 
     return 0;
 }
