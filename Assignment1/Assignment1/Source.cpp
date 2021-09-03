@@ -3,6 +3,7 @@
 #include <conio.h>
 #include <malloc.h>
 #include <string.h>
+#include <assert.h>
 
 //Player class
 class Player
@@ -16,14 +17,14 @@ public:
 	Player() {}
 	~Player() {}
 
-	void set(char* s)
+	void setPlayer(char* s)
 	{
 		playerName = s;
 		playerX = 0;
 		playerY = 0;
 	}
 
-	void print()
+	void printPlayer()
 	{
 		printf("Player - ");
 		for (size_t i = 0; i < strlen(playerName); i++)
@@ -56,17 +57,23 @@ private:
 	int monsterY = 0;
 
 public:
+	int monsterLife = 0;
 	Monster() {}
 	~Monster() {}
 
-	void set(char* s)
+	bool setMonster(char* s)
 	{
 		monsterName = s;
-		monsterX = (rand() % 100) - 50;
-		monsterY = (rand() % 100) - 50;
+		monsterX = (rand() % 101) - 50;
+		monsterY = (rand() % 101) - 50;
+		monsterLife = rand() % 11;
+		if (monsterLife == 0)
+			return true;
+		else
+			return false;
 	}
 
-	void print()
+	void printMonster()
 	{
 		printf("Monster - ");
 		for (size_t i = 0; i < strlen(monsterName); i++)
@@ -74,6 +81,7 @@ public:
 			printf("%c", monsterName[i]);
 		}
 		printf(": [ %d , %d ]\n", monsterX, monsterY);
+		//printf("%d", monsterLife);
 		//printf("%d", strlen(name));
 	}
 
@@ -109,17 +117,18 @@ int main()
 
 		}
 
-		//Print Player
-		player->set(playerName);
-		player->print();
+		player->setPlayer(playerName);
+		//player->printPlayer();
 	}
 
-	//Setup and Print Monsters
+
+	//Setup Monsters
 	unsigned int* numberOfMonsters = new unsigned int();
 	printf("Enter number of monsters: ");
 	scanf_s("%d", &(*numberOfMonsters));
 	printf("Number of monsters: %d\n", *numberOfMonsters);
-	Monster* monsters = new Monster[*numberOfMonsters];
+	Monster* monsters = new Monster[*numberOfMonsters]();
+	int* countToDeleteMonsters = new int();
 	(void)getchar();
 	for (size_t i = 0; i < *numberOfMonsters; i++)
 	{
@@ -143,14 +152,27 @@ int main()
 			}
 		}
 
-		monsters[i].set(monsterName);
-		monsters[i].print();
+		if (monsters[i].setMonster(monsterName))
+		{
+			(*countToDeleteMonsters)++;
+		}
+		//monsters[i].printMonster();
 	}
 
+
+	//Game Logic - Player Movement and Monster AI
+	int* countDeleteMonsters = new int();
+
 	{
+		//Generate new monster every 5 turns
+		int loopNumber = 1;
+		//player movement input
 		char movement;
+		//Count of number of new monsters added
+		int countAddMonster = 0;
 		do
 		{
+			//player movement and print player and monster position
 			printf("Enter 'wasd' for movement direction. Enter 'q' to quit.\n");
 			movement = _getch();
 			//printf("%c\n", movement);
@@ -159,22 +181,80 @@ int main()
 				break;
 			}
 			player->playerMovement(movement);
-			player->print();
+			player->printPlayer();
 			for (size_t i = 0; i < *numberOfMonsters; i++)
 			{
 				monsters[i].monsterMovement();
-				monsters[i].print();
+				monsters[i].printMonster();
 			}
+
+
+			/*
+			* Monster addtion and deletion AI
+			*/
+
+			//check if its 5th turn in order to add memory for new monster
+			int addLoop = 0;
+			if (loopNumber % 5 == 0)
+				addLoop++;
+			//temporary monster list for storing undeleted items
+			Monster* tempMonsters = new Monster[(*numberOfMonsters) - (*countToDeleteMonsters) + (addLoop)];
+			//count of monsters to be deleted next turn
+			*countToDeleteMonsters = 0;
+			//count of monsters deletd this turn
+			*countDeleteMonsters = 0;
+			//Monster deletion AI
+			//delete monster if life is 0 and count number of monsters to delete next turn
+			for (size_t i = 0, j = 0; i < *numberOfMonsters; i++)
+			{
+				if (monsters[i].monsterLife > 0)
+				{
+					--(monsters[i].monsterLife);
+					if (monsters[i].monsterLife == 0)
+						(*countToDeleteMonsters)++;
+					tempMonsters[j++] = monsters[i];
+				}
+				else
+				{
+					(*countDeleteMonsters)++;
+				}
+			}
+			for (size_t i = 0; i < (*numberOfMonsters) - (*countDeleteMonsters); i++)
+			{
+				monsters[i] = tempMonsters[i];
+			}
+			(*numberOfMonsters) -= (*countDeleteMonsters);
+			delete[] tempMonsters;
+			//printf("%d", *numberOfMonsters);
+
+			//Monster addition A
+			if (loopNumber % 5 == 0)
+			{
+				char newMonsterName[10] = "NewB";
+				sprintf_s(newMonsterName, "NewB%d", countAddMonster++);
+				//printf("%s", newMonsterName);
+				monsters[(*numberOfMonsters)].setMonster(newMonsterName);
+				(*numberOfMonsters)++;
+			}
+			loopNumber++;
+
 		} while (movement != 'q');
 	}
 
-	player->print();
+
+
+	printf("Final Position: \n");
+	player->printPlayer();
 	for (size_t i = 0; i < *numberOfMonsters; i++)
 	{
-		monsters[i].print();
+		monsters[i].printMonster();
 	}
 
-
+	delete countDeleteMonsters;
+	delete countToDeleteMonsters;
+	delete[] monsters;
+	delete numberOfMonsters;
+	delete player;
 
 	return 0;
 }
