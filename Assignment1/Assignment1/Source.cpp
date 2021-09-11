@@ -97,7 +97,7 @@ int main()
 	//Setup Player
 	Player* player = new Player();
 	{
-		char* playerName = new char();
+		char* playerName = (char*)malloc(sizeof(char));
 		char* c = new char();
 		size_t* nameSize = new size_t;
 		*nameSize = 1;
@@ -128,15 +128,15 @@ int main()
 	scanf_s("%d", &(*numberOfMonsters));
 	printf("Number of monsters: %d\n", *numberOfMonsters);
 	Monster* monsters = new Monster[*numberOfMonsters]();
-	int* countToDeleteMonsters = new int();
+	unsigned int* countToDeleteMonsters = new unsigned int();
 	(void)getchar();
 	for (size_t i = 0; i < *numberOfMonsters; i++)
 	{
-		char* monsterName = new char();
+		char* monsterName = (char*)malloc(sizeof(char));
 		char* c = new char();
 		size_t* nameSize = new size_t;
 		*nameSize = 1;
-		printf("Enter monster %d name: ", i + 1);
+		printf("Enter monster %zu name: ", i + 1);
 
 		while (*c != '\n')
 		{
@@ -165,7 +165,7 @@ int main()
 
 	{
 		//Generate new monster every 5 turns
-		int loopNumber = 1;
+		unsigned int loopNumber = 1;
 		//player movement input
 		char movement;
 		//Count of number of new monsters added
@@ -198,7 +198,7 @@ int main()
 			if (loopNumber % 5 == 0)
 				addLoop++;
 			//temporary monster list for storing undeleted items
-			Monster* tempMonsters = new Monster[(*numberOfMonsters) - (*countToDeleteMonsters) + (addLoop)];
+			Monster* tempMonsters = new Monster[static_cast<__int64>(*numberOfMonsters) - (*countToDeleteMonsters) + (addLoop)];
 			//count of monsters to be deleted next turn
 			*countToDeleteMonsters = 0;
 			//count of monsters deletd this turn
@@ -219,7 +219,7 @@ int main()
 					(*countDeleteMonsters)++;
 				}
 			}
-			for (size_t i = 0; i < (*numberOfMonsters) - (*countDeleteMonsters); i++)
+			for (unsigned int i = 0; i < static_cast<__int64>(*numberOfMonsters) - (*countDeleteMonsters); i++)
 			{
 				monsters[i] = tempMonsters[i];
 			}
