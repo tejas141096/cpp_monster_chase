@@ -4,6 +4,8 @@
 #include <malloc.h>
 #include <string.h>
 #include <assert.h>
+#include "Math/Point2D.h"
+#include <Point2D.h>
 
 //Player class
 class Player
@@ -12,6 +14,7 @@ private:
 	char* playerName = nullptr;
 	int playerX = 0;
 	int playerY = 0;
+	//Point2D playerCoordinate;
 
 public:
 	Player() {}
@@ -20,8 +23,6 @@ public:
 	void setPlayer(char* s)
 	{
 		playerName = s;
-		playerX = 0;
-		playerY = 0;
 	}
 
 	void printPlayer()
@@ -94,6 +95,8 @@ public:
 
 int main()
 {
+	Engine::Point2DUnitTest();
+	
 	//Setup Player
 	Player* player = new Player();
 	{
